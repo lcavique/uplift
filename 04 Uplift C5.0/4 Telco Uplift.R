@@ -1,6 +1,6 @@
 # calculo Uplift
 library(tidyverse)
-df = read.table("Telco_YstarScoreGroup.csv",  header=TRUE, sep=";") 
+df = read.table("Telco_YstarSortedGroup.csv",  header=TRUE, sep=";") 
 Resp_tot=sum(df$Respondent)
 
 df %>% 
@@ -12,13 +12,19 @@ df %>%
             TreatRate  = nTResp/Resp_tot*100,
             ContrRate  = nCResp/Resp_tot*100, 
             Uplift     = TreatRate-ContrRate,
-            minScore   = min(score),
-            maxScore   = max(score)
+            # minScore   = min(score),
+            # maxScore   = max(score)
             )
 
 # alterado depois de ver a pivottable
+df$uplift=0
+df$uplift[df$group==1]=  -10.30 
+df$uplift[df$group==2]=   18.30
+df$uplift[df$group==3]=    6.11
+
+
 df$persuadable=0
-df$persuadable[df$score>=0.682]=1 
+df$persuadable[df$uplift>0]=1 
 print(paste ("persuadables=",sum(df$persuadable)))
 print(paste ("%persuadables=",sum(df$persuadable)/count(df)))
 
